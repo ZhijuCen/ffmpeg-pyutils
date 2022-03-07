@@ -1,2 +1,2 @@
 
-from .video import resize
+from .video import resize, concat_video_clips
