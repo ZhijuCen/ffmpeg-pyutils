@@ -27,10 +27,13 @@ def main(args: Namespace):
 
     width = args.width
     height = args.height
+    crf = args.crf
+    preset = args.preset
     for src_filepath in source_dir.iterdir():
         if src_filepath.is_file() and str(src_filepath).endswith(SUPPORTED_EXTS):
             dst_filepath = destination_dir.joinpath(src_filepath.stem + args.ext)
-            ret_code = resize(str(src_filepath), str(dst_filepath), width, height)
+            ret_code = resize(str(src_filepath), str(dst_filepath),
+                              width, height, crf, preset)
             if ret_code != 0:
                 print(f"ret_code is not 0 while output file {str(dst_filepath)}.")
 
@@ -41,9 +44,14 @@ if __name__ == "__main__":
                         help="Source directory containing video files.")
     parser.add_argument("-d", "--destination-dir", type=str, required=True,
                         help="Destination directory that output video stores at.")
-    parser.add_argument("--width", type=int, help="width of output video.")
-    parser.add_argument("--height", type=int, help="height of output video.")
+    parser.add_argument("--width", default=1920, type=int, help="width of output video.")
+    parser.add_argument("--height", default=1080, type=int, help="height of output video.")
     parser.add_argument("--ext", type=str, default=".mp4",
                         help="Extension of output video file. Default: %(default)r")
+    parser.add_argument("--crf", default=28, type=int,
+                        help="Constant Rate Factor to control bitrate of video. Default: %(default)r")
+    parser.add_argument("--preset", default="fast",
+                        choices=["veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"],
+                        help="In which speed to encode media file. Default: %(default)r")
     args = parser.parse_args()
     main(args)

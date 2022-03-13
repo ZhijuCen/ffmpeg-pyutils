@@ -26,7 +26,7 @@ class ClipConfig(object):
             for k in ["w", "h", "x", "y"]:
                 if k not in self.crop:
                     raise KeyError(f"self.crop does not contain key `{k}`")
-    
+
     def filter_complex_string_for_video(self):
         trim_end = f":{self.end}" if self.end is not None else ""
         crop_spec = (f",crop=w={self.crop.w}:h={self.crop.h}"
@@ -37,7 +37,7 @@ class ClipConfig(object):
             f"trim={self.start}{trim_end}"
             f",setpts={1./self.motion_speed}*(PTS-STARTPTS)"
             f"{crop_spec}")
-    
+
     def filter_complex_string_for_audio(self):
         trim_end = f":{self.end}" if self.end is not None else ""
         return (
@@ -48,11 +48,12 @@ class ClipConfig(object):
         )
 
 
-def resize(src: str, dst: str, width: int = 1920, height: int = 1080) -> int:
+def resize(src: str, dst: str, width: int = 1920, height: int = 1080,
+           crf: int = 28, preset: str = "fast") -> int:
     cmd = (
         f"ffmpeg -i {src!r}"
         f"{try_use_libx265_video_codec(dst)}"
-        f" -crf 28 -preset fast"
+        f" -crf {crf} -preset {preset}"
         f" -c:a aac"
         f" -s {width}x{height}"
         f" -ignore_unknown"
